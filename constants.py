@@ -1,0 +1,15 @@
+WIDTH, HEIGHT = 800, 600
+FPS = 60
+BACKGROUND_COLOR = (0, 0, 0)
+PARTICLE_RADIUS = 10
+GRAVITY = 0.1
+DAMPING = -0.5
+
+FLOOR_FRICTION = 0.9
+BOUNCE = 0.5
+PARTICLE_COLORS = [    
+    (255, 100, 100),  # Red
+    (100, 255, 100),  # Green
+    (100, 100, 255),  # Blue 
+    (255, 255, 255),  # White
+]
