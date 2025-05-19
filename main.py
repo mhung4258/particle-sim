@@ -28,12 +28,11 @@ def main():
                 x,y = event.pos
                 particles.append(Particle(x, y))
 
+        handle_all_collisions(particles)
         for p in particles:
             p.update()
             p.draw(screen)
         
-
-
         pygame.display.flip()
         clock.tick(FPS)
     
