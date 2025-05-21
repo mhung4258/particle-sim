@@ -29,7 +29,6 @@ def edge_detection(particle):
         particle.y = WORLD_HEIGHT - particle.radius
         if abs(particle.vy) < MINIMUM_VELOCITY:
             particle.vy *= .5
-        particle.vx *= FLOOR_FRICTION
 
 
 # Distance formula

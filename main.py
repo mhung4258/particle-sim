@@ -18,14 +18,12 @@ class Simulation:
             random.randint(PARTICLE_RADIUS, WORLD_HEIGHT-PARTICLE_RADIUS)
         ) for _ in range(2000)]
         self.grid = ParticleGrid(cell_size=PARTICLE_RADIUS*3)    
-
-        self.cam_x = 0
-        self.cam_y = 0
         self.zoom = 1.0
         self.zoom_step = 0.1
         self.min_zoom = 0.2
-        self.max_zoom = 5.0
-
+        self.max_zoom = min(WORLD_WIDTH/WIDTH, WORLD_HEIGHT/HEIGHT)
+        self.cam_x = (WORLD_WIDTH - WIDTH /self.zoom)/ 2
+        self.cam_y = (WORLD_HEIGHT - HEIGHT/self.zoom)/ 2
 
         self.running = True
 
@@ -42,16 +40,14 @@ class Simulation:
             elif event.type == pygame.MOUSEWHEEL:
                 mx, my = pygame.mouse.get_pos()
 
-                worldx = mx / self.zoom + self.cam_x
-                worldy = my / self.zoom + self.cam_y
+                worldx_pre = mx / self.zoom + self.cam_x
+                worldy_pre = my / self.zoom + self.cam_y
 
                 self.zoom += event.y * self.zoom_step
                 self.zoom = max(self.min_zoom, min(self.max_zoom, self.zoom))
 
-                self.cam_x = worldx - mx / self.zoom
-                self.cam_y = worldy - my / self.zoom
-
-
+                self.cam_x = worldx_pre - mx / self.zoom
+                self.cam_y = worldy_pre - my / self.zoom
 
     def update(self):
         handle_all_collisions(self.particles, self.grid)
@@ -62,9 +58,21 @@ class Simulation:
     
     def draw(self):
         self.screen.fill(BACKGROUND_COLOR)
+        
         for p in self.particles:
-            p.draw(self.screen, self.zoom, self.cam_x, self.cam_y)
-
+            if(self.cam_x <= p.x <= self.cam_x + WIDTH/self.zoom) and (self.cam_y <= p.y <= self.cam_y +HEIGHT/self.zoom):
+                p.draw(self.screen, self.zoom, self.cam_x, self.cam_y) 
+        
+        
+        pygame.draw.rect(self.screen, (128, 128, 128),
+            pygame.Rect(
+                -self.cam_x * self.zoom,
+                -self.cam_y * self.zoom,
+                WORLD_WIDTH * self.zoom,
+                WORLD_HEIGHT * self.zoom
+            ),
+            2
+        )
 
         font = pygame.font.SysFont("Arial", 18)
         fps = int(self.clock.get_fps())
@@ -78,8 +86,6 @@ class Simulation:
 
         pygame.display.flip()
     
-
-
     def move_cam(self):
         keys = pygame.key.get_pressed()
         cam_speed = 10 / self.zoom
@@ -100,8 +106,6 @@ class Simulation:
             self.update()
             self.draw()
             self.clock.tick(FPS)
-
-
 
 
         pygame.quit()

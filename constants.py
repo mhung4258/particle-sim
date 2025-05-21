@@ -1,21 +1,20 @@
 WIDTH, HEIGHT = 1600, 1080
-WORLD_WIDTH, WORLD_HEIGHT = 3000, 3000
+WORLD_WIDTH, WORLD_HEIGHT = 5000, 5000
 
 FPS = 60
 BACKGROUND_COLOR = (0, 0, 0)
 PARTICLE_RADIUS = 3
-MAXIMUM_VELOCITY = 1
+MAXIMUM_VELOCITY = 2
 MINIMUM_VELOCITY = 0.01
 
-FLOOR_FRICTION = 0.9
 BOUNCE = 0.5
 
 NUM_TYPE = 4
 PARTICLE_COLORS = [
-    (100, 255, 100),  # Prey - Green
-    (255, 80, 80),    # Predator - Red
-    (80, 80, 255),    # Neutral - Blue
-    (255, 255, 100),  # Social - Yellow
+    (100, 255, 100),  #  - Green
+    (255, 80, 80),    #  - Red
+    (80, 80, 255),    #  - Blue
+    (255, 255, 100),  #  - Yellow
 ]
 
 

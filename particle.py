@@ -17,7 +17,6 @@ class Particle:
         self.type = type if type is not None else random.randint(0, NUM_TYPE - 1)
         self.color = PARTICLE_COLORS[self.type]
 
-
     def update(self):
         #update position by velocity
         self.x += self.vx 
@@ -36,6 +35,7 @@ class Particle:
         edge_detection(self)
     
     def draw(self, screen, zoom, cam_x, cam_y):
+
         draw_x = int((self.x - cam_x)* zoom)
         draw_y = int((self.y - cam_y) * zoom)
         draw_radius = max(1, int(self.radius * zoom))

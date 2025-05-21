@@ -14,7 +14,6 @@ class ParticleGrid:
                 self.grid[cell] = []
             self.grid[cell].append(p)
 
-
     def get_nearby_particles(self, particle):
         nearby = []
         cx, cy = self.get_cell_coords(particle.x, particle.y)
@@ -25,5 +24,5 @@ class ParticleGrid:
                 if nearby_cell in self.grid:
                     nearby.extend(self.grid[nearby_cell])
         nearby = [p for p in nearby if p != particle]
-        
+
         return nearby
