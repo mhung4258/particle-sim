@@ -1,8 +1,7 @@
 from constants import *
 import numpy as np
+from particle_grid import *
 
-def gravity(particle):
-    particle.vy += GRAVITY * particle.mass
 
 def edge_detection(particle):
 
@@ -13,9 +12,9 @@ def edge_detection(particle):
         if abs(particle.vx) < MINIMUM_VELOCITY:
             particle.vx *= .5
 
-    elif particle.x + particle.radius >= WIDTH:
+    elif particle.x + particle.radius >= WORLD_WIDTH:
         particle.vx = -abs(particle.vx) * particle.bounce
-        particle.x = WIDTH - particle.radius
+        particle.x = WORLD_WIDTH - particle.radius
         if abs(particle.vx) < MINIMUM_VELOCITY:
             particle.vx *= .5
 
@@ -25,9 +24,9 @@ def edge_detection(particle):
         if abs(particle.vy) < MINIMUM_VELOCITY:
             particle.vy *= .5
 
-    elif particle.y + particle.radius >= HEIGHT:
+    elif particle.y + particle.radius >= WORLD_HEIGHT:
         particle.vy = -abs(particle.vy) * particle.bounce
-        particle.y = HEIGHT - particle.radius
+        particle.y = WORLD_HEIGHT - particle.radius
         if abs(particle.vy) < MINIMUM_VELOCITY:
             particle.vy *= .5
         particle.vx *= FLOOR_FRICTION
@@ -78,14 +77,46 @@ def collission_handler(p1,p2):
     if overlap > 0:
         separation = overlap * 0.8
         p1.x -= separation * nx * 0.5
-        p1.x -= separation * nx * 0.5
+        p2.x += separation * nx * 0.5
         p1.y -= separation * ny * 0.5
         p2.y += separation * ny * 0.5
 
+# accepts list of particles
+def handle_all_collisions(particles, grid):
+    grid.update(particles)
 
-# accespts list of particles
-def handle_all_collisions(particles):
-    for i in range(len(particles)):
-        for j in range(i+1, len(particles)):
-            if check_collision(particles[i], particles[j]):
-                collission_handler(particles[i], particles[j])
+    for particle in particles:
+        nearby = grid.get_nearby_particles(particle)
+
+        for other in nearby:
+            if particle != other and check_collision(particle, other):
+                collission_handler(particle, other)
+    
+# Interations for Particle Life
+
+def apply_interaction(particles, grid):
+    grid.update(particles)
+    for p in particles:
+        nearby = grid.get_nearby_particles(p)
+
+        for other in nearby:
+            if p is other:
+                continue
+
+            dx = other.x - p.x
+            dy = other.y - p.y
+
+            dist_sq = dx * dx + dy * dy
+            dist_sq = max(0.01,  dist_sq)
+            dist = max(1.0, np.sqrt(dist_sq)) 
+
+            if dist > 100:
+                continue
+
+            force = INTERACTION_RULES[p.type][other.type]
+            strength = force / dist_sq
+            fx = strength * dx
+            fy = strength * dy
+
+            p.vx += fx
+            p.vy += fy

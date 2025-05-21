@@ -6,21 +6,28 @@ from physics import *
 
 
 class Particle:
-    def __init__(self, x ,y):
+    def __init__(self, x ,y, type=None):
         self.x = x
         self.y = y
         self.radius = PARTICLE_RADIUS
-        self.color = random.choice(PARTICLE_COLORS)
-        self.vx = random.uniform(-5,5)
-        self.vy = random.uniform(-5,5)
-        self.mass = 0.3 #random.uniform(0.8, 1.2)
-        self.bounce = random.uniform(0.7, 0.9)
+        self.vx = 0
+        self.vy = 0
+        self.mass = 0.3 
+        self.bounce = 0.8
+        self.type = type if type is not None else random.randint(0, NUM_TYPE - 1)
+        self.color = PARTICLE_COLORS[self.type]
+
 
     def update(self):
-        gravity(self)
         #update position by velocity
         self.x += self.vx 
         self.y += self.vy
+
+        speed = np.hypot(self.vx, self.vy)
+        if speed > MAXIMUM_VELOCITY:
+            scale = MAXIMUM_VELOCITY / speed
+            self.vx *= scale
+            self.vy *= scale
         
         if abs(self.vx) < MINIMUM_VELOCITY:
             self.vx *= 0.5
@@ -28,7 +35,12 @@ class Particle:
             self.vx *= 0.5
         edge_detection(self)
     
-    def draw(self, screen):
-        pygame.draw.circle(screen, self.color,(self.x, self.y), self.radius)
+    def draw(self, screen, zoom, cam_x, cam_y):
+        draw_x = int((self.x - cam_x)* zoom)
+        draw_y = int((self.y - cam_y) * zoom)
+        draw_radius = max(1, int(self.radius * zoom))
+
+
+        pygame.draw.circle(screen, self.color,(draw_x,draw_y), draw_radius)
 
     
